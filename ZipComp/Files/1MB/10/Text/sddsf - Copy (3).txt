@@ -1,0 +1,7 @@
+int estado=0
+
+task{
+estado++
+if(estado>8){estado=0}
+delay
+}

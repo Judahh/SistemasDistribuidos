@@ -154,7 +154,7 @@ public class BasicInfo {
       }
 
    }
-   
+
    public void addTime(long time, int column, int row) throws WriteException,
            RowsExceededException {
       addLong(this.excelSheet, column, row, time);
@@ -186,6 +186,20 @@ public class BasicInfo {
       sheet.addCell(number);
    }
 
+   public void addDouble(int column, int row,
+           double longNumber) throws WriteException, RowsExceededException {
+      Label label;
+      label = new Label(column, row, String.valueOf(longNumber), times);
+      this.excelSheet.addCell(label);
+   }
+   
+   public void addLong(int column, int row,
+           long longNumber) throws WriteException, RowsExceededException {
+      Label label;
+      label = new Label(column, row, String.valueOf(longNumber), times);
+      this.excelSheet.addCell(label);
+   }
+
    public void addLong(WritableSheet sheet, int column, int row,
            long longNumber) throws WriteException, RowsExceededException {
       Label label;
@@ -212,5 +226,19 @@ public class BasicInfo {
       Label label;
       label = new Label(column, row, s, times);
       sheet.addCell(label);
+   }
+
+   public void addLabel(int column, int row, String s)
+           throws WriteException, RowsExceededException {
+      Label label;
+      label = new Label(column, row, s, times);
+      this.excelSheet.addCell(label);
+   }
+
+   public void addLabel(int row, String s)
+           throws WriteException, RowsExceededException {
+      Label label;
+      label = new Label(0, row, s, times);
+      this.excelSheet.addCell(label);
    }
 }
