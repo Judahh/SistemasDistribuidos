@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jxl.write.WriteException;
 
 /**
  *
@@ -35,21 +34,20 @@ public class SerialCompactor extends GenericCompactor {
       initialization();
    }
    
+   @Override
    public long totalTime(int wave) {
-      long time = 0;
+      long tempTime;
       File directory = new File("Files/" + size + "/" + quantity + "/" + type + "/");
       File[] files = directory.listFiles();
       List<Compactor> threads = new ArrayList();
-
-      for (int index = 0; index < files.length; index++) {
+      for (File file : files) {
          try {
-            if (files[index].isFile()) {
-               threads.add(new Compactor(directory.getPath(), files[index].getName(), this.way));
+            if (file.isFile()) {
+               threads.add(new Compactor(directory.getPath(), file.getName(), this.way));
                threads.get(threads.size() - 1).start();
                threads.get(threads.size() - 1).join();
             }
-
-         } catch (InterruptedException ex) {
+         }catch (InterruptedException ex) {
             Logger.getLogger(SerialCompactor.class.getName()).log(Level.SEVERE, null, ex);
          }
       }
@@ -57,7 +55,7 @@ public class SerialCompactor extends GenericCompactor {
       this.numberOfFiles = threads.size();
       
       addNames(threads);
-      time = addTotal(threads, wave);
-      return time;
+      tempTime = addTotal(threads, wave);
+      return tempTime;
    }
 }

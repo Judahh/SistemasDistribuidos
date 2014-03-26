@@ -7,13 +7,9 @@ package Parallel;
 
 import Compactor.Compactor;
 import Compactor.GenericCompactor;
-import Serial.SerialCompactor;
-import info.BasicInfo;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jxl.write.WriteException;
@@ -39,11 +35,11 @@ public class ParallelCompactor extends GenericCompactor {
    
    @Override
    protected long addTotal(List<Compactor> threads, int wave){
-      long time = 0;
+      long tempTime = 0;
       for (int index = 0; index < threads.size(); index++) {
          long newTime = threads.get(index).getTime();
-         if (time < newTime) {
-            time = newTime;
+         if (tempTime < newTime) {
+            tempTime = newTime;
          }
          try {
             basicInfo.addLong(wave + 1 , index + 1, newTime);
@@ -52,16 +48,16 @@ public class ParallelCompactor extends GenericCompactor {
          }
       }
       try {
-         basicInfo.addLong(wave + 1 , threads.size() + 1, time);
+         basicInfo.addLong(wave + 1 , threads.size() + 1, tempTime);
       } catch (WriteException writeException) {
          Logger.getLogger(GenericCompactor.class.getName()).log(Level.SEVERE, null, writeException);
       }
-      return time;
+      return tempTime;
    }
 
    @Override
    public long totalTime(int wave) {
-      long time = 0;
+      long tempTime = 0;
 
       File directory = new File("Files/" + size + "/" + quantity + "/" + type + "/");
       File[] files = directory.listFiles();
@@ -85,7 +81,7 @@ public class ParallelCompactor extends GenericCompactor {
       }
       
       addNames(threads);
-      time = addTotal(threads, wave);
-      return time;
+      tempTime = addTotal(threads, wave);
+      return tempTime;
    }
 }

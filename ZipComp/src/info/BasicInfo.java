@@ -188,36 +188,89 @@ public class BasicInfo {
 
    public void addDouble(int column, int row,
            double longNumber) throws WriteException, RowsExceededException {
-      Label label;
-      label = new Label(column, row, String.valueOf(longNumber), times);
-      this.excelSheet.addCell(label);
+      Number number;
+      number = new Number(column, row, longNumber, times);
+      this.excelSheet.addCell(number);
    }
    
    public void addLong(int column, int row,
            long longNumber) throws WriteException, RowsExceededException {
-      Label label;
-      label = new Label(column, row, String.valueOf(longNumber), times);
-      this.excelSheet.addCell(label);
+      Number number;
+      number = new Number(column, row, longNumber, times);
+      this.excelSheet.addCell(number);
    }
 
    public void addLong(WritableSheet sheet, int column, int row,
            long longNumber) throws WriteException, RowsExceededException {
-      Label label;
-      label = new Label(column, row, String.valueOf(longNumber), times);
-      sheet.addCell(label);
+      Number number;
+      number = new Number(column, row, longNumber, times);
+      sheet.addCell(number);
    }
 
+    public void addStrings(String string0, String string1, String string2, String string3, String string4, String string5, String string6, int row)
+           throws WriteException, RowsExceededException {
+      addStrings(this.excelSheet, 0, row, string0, string1, string2, string3, string4, string5, string6);
+   }
+   
+   public void addStrings(String string0, String string1, String string2, int row)
+           throws WriteException, RowsExceededException {
+      addStrings(this.excelSheet, 0, row, string0, string1, string2);
+   }
+   
    public void addStrings(String string0, String string1, int row)
            throws WriteException, RowsExceededException {
       addStrings(this.excelSheet, 0, row, string0, string1);
    }
+   
+   public void addString(String string0, int row)
+           throws WriteException, RowsExceededException {
+      addString(this.excelSheet, 0, row, string0);
+   }
 
+   
+   public void addStrings(WritableSheet sheet, int column, int row, String string0, String string1, String string2, String string3, String string4, String string5, String string6)
+           throws WriteException, RowsExceededException {
+      Label label;
+      label = new Label(column, row, string0, times);
+      sheet.addCell(label);
+      label = new Label(column + 1, row, string1, times);
+      sheet.addCell(label);
+      label = new Label(column + 2, row, string2, times);
+      sheet.addCell(label);
+      label = new Label(column + 3, row, string3, times);
+      sheet.addCell(label);
+      label = new Label(column + 4, row, string4, times);
+      sheet.addCell(label);
+      label = new Label(column + 5, row, string5, times);
+      sheet.addCell(label);
+      label = new Label(column + 6, row, string6, times);
+      sheet.addCell(label);
+   }
+   
+   public void addStrings(WritableSheet sheet, int column, int row, String string0, String string1, String string2)
+           throws WriteException, RowsExceededException {
+      Label label;
+      label = new Label(column, row, string0, times);
+      sheet.addCell(label);
+      label = new Label(column + 1, row, string1, times);
+      sheet.addCell(label);
+      label = new Label(column + 2, row, string2, times);
+      sheet.addCell(label);
+   }
+   
    public void addStrings(WritableSheet sheet, int column, int row, String string0, String string1)
            throws WriteException, RowsExceededException {
       Label label;
       label = new Label(column, row, string0, times);
       sheet.addCell(label);
       label = new Label(column + 1, row, string1, times);
+      sheet.addCell(label);
+   }
+   
+   public void addString(WritableSheet sheet, int column, int row, String string0)
+           throws WriteException, RowsExceededException {
+      Label label;
+      label = new Label(column, row, string0, times);
       sheet.addCell(label);
    }
 

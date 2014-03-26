@@ -23,7 +23,10 @@ public class GenericCompactor extends Thread {
    protected final String quantity;
    protected final String type;
    protected String way;
-   protected long time;
+   protected long totalTime;
+   protected double averageTime;
+   protected long maxTime;
+   protected long minTime;
    protected int number;
    protected int numberOfFiles;
    protected BasicInfo basicInfo;
@@ -48,16 +51,19 @@ public class GenericCompactor extends Thread {
       try {
          basicInfo.addLabel(threads.size() + 1, "Total");
          basicInfo.addLabel(threads.size() + 2, "Average Total");
+         basicInfo.addLabel(threads.size() + 3, "Max");
+         basicInfo.addLabel(threads.size() + 4, "Min");
+         basicInfo.addLabel(threads.size() + 5, "Error");
       } catch (WriteException ex) {
          Logger.getLogger(GenericCompactor.class.getName()).log(Level.SEVERE, null, ex);
       }
    }
 
    protected long addTotal(List<Compactor> threads, int wave) {
-      long time = 0;
+      long tempTime = 0;
       for (int index = 0; index < threads.size(); index++) {
          long newTime = threads.get(index).getTime();
-         time += newTime;
+         tempTime += newTime;
          try {
             this.basicInfo.addLong(wave + 1, index + 1, newTime);
          } catch (WriteException writeException) {
@@ -65,17 +71,31 @@ public class GenericCompactor extends Thread {
          }
       }
       try {
-         this.basicInfo.addLong(wave + 1, threads.size() + 1, time);
+         this.basicInfo.addLong(wave + 1, threads.size() + 1, tempTime);
       } catch (WriteException writeException) {
          Logger.getLogger(GenericCompactor.class.getName()).log(Level.SEVERE, null, writeException);
       }
-      return time;
+      return tempTime;
    }
 
-   private void addAverageTotal(double total) {
+   private void addAverageTotal() {
       try {
-         System.out.println("total="+total);
-         this.basicInfo.addDouble(1, this.numberOfFiles + 2, total);
+         System.out.println("total=" + this.averageTime);
+         this.basicInfo.addDouble(1, this.numberOfFiles + 2, this.averageTime);
+      } catch (WriteException writeException) {
+         Logger.getLogger(GenericCompactor.class.getName()).log(Level.SEVERE, null, writeException);
+      }
+   }
+   
+   private void addError() {
+      long timeError = this.maxTime - this.minTime;
+      try {
+         System.out.println("max=" + this.maxTime);
+         this.basicInfo.addDouble(1, this.numberOfFiles + 3, this.maxTime);
+         System.out.println("min=" + this.minTime);
+         this.basicInfo.addDouble(1, this.numberOfFiles + 4, this.minTime);
+         System.out.println("error=" + timeError);
+         this.basicInfo.addDouble(1, this.numberOfFiles + 5, timeError);
       } catch (WriteException writeException) {
          Logger.getLogger(GenericCompactor.class.getName()).log(Level.SEVERE, null, writeException);
       }
@@ -83,10 +103,6 @@ public class GenericCompactor extends Thread {
 
    public int getNumber() {
       return number;
-   }
-
-   public long getTime() {
-      return time;
    }
 
    public String getWay() {
@@ -111,7 +127,7 @@ public class GenericCompactor extends Thread {
       this.type = type;
       this.way = "Generic";
       this.number = 5;
-      this.time = 0;
+      this.totalTime = 0;
       this.numberOfFiles = 0;
       this.basicInfo = new BasicInfo();
    }
@@ -122,7 +138,7 @@ public class GenericCompactor extends Thread {
       this.type = type;
       this.way = "Generic";
       this.number = number;
-      this.time = 0;
+      this.totalTime = 0;
       this.numberOfFiles = 0;
       this.basicInfo = new BasicInfo();
    }
@@ -131,15 +147,44 @@ public class GenericCompactor extends Thread {
       return 0;
    }
 
+   public long getMaxTime() {
+      return maxTime;
+   }
+
+   public long getMinTime() {
+      return minTime;
+   }
+
+   public long getTotalTime() {
+      return totalTime;
+   }
+
+   public double getAverageTime() {
+      return averageTime;
+   }
+   
    @Override
    public void run() {
+      this.maxTime = 0;
+      this.minTime = Long.MAX_VALUE;
       for (int index = 0; index < this.number; index++) {
-         long time = totalTime(index);
-         System.out.println("" + time);
-         this.time += time;
-         System.out.println("" + this.time);
+         long tempTime = totalTime(index);
+
+         if (tempTime > this.maxTime) {
+            this.maxTime = tempTime;
+         }
+
+         if (tempTime < minTime) {
+            this.minTime = tempTime;
+         }
+
+         System.out.println("" + tempTime);
+         this.totalTime += tempTime;
+         System.out.println("" + this.totalTime);
       }
-      addAverageTotal((double)this.time / this.number);
+      this.averageTime=(double) this.totalTime / this.number;
+      addAverageTotal();
+      addError();
       try {
          basicInfo.close();
       } catch (IOException | WriteException exception) {

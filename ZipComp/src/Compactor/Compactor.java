@@ -46,6 +46,7 @@ public class Compactor extends Thread {
       this.file = new File(this.filePath + "\\" + this.fileName);
    }
 
+   @Override
    public void run() {
       time = System.currentTimeMillis();
       FileInputStream fileInputStream;
@@ -60,7 +61,8 @@ public class Compactor extends Thread {
                this.newFile.delete();
                this.newFile.createNewFile();
             }
-            System.out.print(this.newFile.getName() + "...");
+//            System.out.print(this.newFile.getAbsolutePath() + "...");
+//            System.out.print(this.newFile.getName() + "... on " + this.newFile.getAbsolutePath());
             zipOutputStream = new ZipOutputStream(new FileOutputStream(this.newFile));
             zipOutputStream.putNextEntry(new ZipEntry(this.file.getName()));
             while (fileInputStream.read(buffer) > 0) {
@@ -69,7 +71,7 @@ public class Compactor extends Thread {
             }
             fileInputStream.close();
             zipOutputStream.close();
-            System.out.println("OK!");
+//            System.out.println("OK!");
          } catch (FileNotFoundException e) {
             System.err.println("Error!");
             System.err.println("Erro ao compactar ou ler arquivo " + this.fileName + ".");
